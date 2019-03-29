@@ -1,0 +1,246 @@
+void threshold(unsigned long ImageLength, unsigned long ImageWidthByte,unsigned char fxyout[MAXSIZE][3*MAXSIZE],unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+	unsigned int x,y,k=10,t=80,M,N,n[256]={0};
+	double p1=0.0,p2,p[256],sum=0.0,m1,m2;
+	M=ImageLength;N=ImageWidthByte;
+	for(x=0;x<M;x++)
+	{
+		for(y=0;y<N;y++)
+		{
+			
+			n[fxy[x][y]]=n[fxy[x][y]]+1;
+		}
+	}
+
+	for(x=0;x<256;x++)
+	p[x]=n[x]/(double)(M*N);
+	while(k!=0)
+	{
+		p1=0.0;p2=0.0;
+		m1=0.0;m2=0.0;
+		for(x=0;x<t;x++)
+		p1=p1+p[x];
+		p2=1-p1;
+		for(x=0;x<t;x++)
+			m1=m1+p[x]*x;
+		m1=m1/p1;
+		for(x=t;x<256;x++)
+			m2=m2+p[x]*x;
+		m2=m2/p2;
+		printf("m1=%lf m2=%lf \n",m1,m2);
+		
+		int rt=t;
+		
+		t=(int)(m1+m2)/2;
+		k=t-rt;
+		printf("t= %d\n",t);
+	getch();
+	}
+	printf("%d",t);
+	getch();
+	for(x=0;x<M;x++)
+		for(y=0;y<N;y++)
+		{
+			if(fxy[x][y]<t) fxyout[x][y]=0;
+			else fxyout[x][y]=255;
+		}
+}
+void nagation(unsigned long ImageLength, unsigned long ImageWidthByte, unsigned char fxyout[MAXSIZE][3*MAXSIZE], unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+	int i,j;
+	for(i=0; i<ImageLength; i++)
+	{
+		for(j=0; j<ImageWidthByte; j++)
+		{
+			fxyout[i][j]=255-fxy[i][j];
+		}
+	}
+}
+void otso(unsigned long ImageLength, unsigned long ImageWidthByte,unsigned char fxyout[MAXSIZE][3*MAXSIZE],unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+	unsigned int x,y,k=10,t=80,kk,M,N,n[256]={0};
+	double gm=0.0,sb=0.0,p1[256],p2[256],p[256],m[256],sum=0.0,m1,m2,max=0.0;
+	M=ImageLength;N=ImageWidthByte;
+	for(x=0;x<M;x++)
+	{
+		for(y=0;y<N;y++)
+		{
+			
+			n[fxy[x][y]]=n[fxy[x][y]]+1;
+		}
+	}
+
+	for(x=0;x<256;x++)
+	p[x]=n[x]/(double)(M*N);
+	double cs=0,cm=0;
+	for(x=0;x<256;x++)
+	{
+		p1[x]=cs+p[x];
+		cs=p1[x];
+		p2[x]=1-p1[x];
+		m[x]=cm+x*p[x];
+		cm=m[x];
+		gm=gm+x*p[x];
+		printf("  %lf    ",p1[x]);
+	getch();
+	}
+	for(k=0;k<256;k++)
+	{
+		sb=(((gm*p1[k]-m[k])*(gm*p1[k]-m[k]))/(p1[k]*p2[k]));
+		if(sb>max){ max=sb; kk=k;}
+	}
+	
+	for(x=0;x<M;x++)
+		for(y=0;y<N;y++)
+		{
+			if(fxy[x][y]<kk) fxyout[x][y]=0;
+			else fxyout[x][y]=255;
+		}
+}
+void nagation(unsigned long ImageLength, unsigned long ImageWidthByte, unsigned char fxyout[MAXSIZE][3*MAXSIZE], unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+	int i,j;
+	for(i=0; i<ImageLength; i++)
+	{
+		for(j=0; j<ImageWidthByte; j++)
+		{
+			fxyout[i][j]=255-fxy[i][j];
+		}
+	}
+}
+void variableth(unsigned long ImageLength, unsigned long ImageWidthByte,unsigned char fxyout[MAXSIZE][3*MAXSIZE],unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+		int m=ImageLength,n=ImageWidth,a,b,i,j,s,t,xpt,ypt;
+			double sum=0.0,mean=0.0,gm=0.0;
+			a=1,b=1;
+			
+			for(i=0;i<m;i++)
+				for(j=0;j<n;j++)
+					gm=gm+fxy[i][j];
+			gm=gm/(double)(m*n);
+			for(i=0;i<m;i++)
+				for(j=0;j<n;j++)
+				{
+					
+					sum=0.0;
+					for(s=-a;s<=a;s++)
+					{
+						xpt=i+s;
+						if(xpt<0)
+							xpt=0;
+						if(xpt>=m)
+							xpt=m-1;
+					for(t=-b;t<=b;t++)
+					{
+						ypt=j+t;
+						if(ypt<0)
+							ypt=0;
+						if(ypt>=n)
+							ypt=n-1;
+							sum=sum+fxy[xpt][ypt];
+
+					}
+					}
+					mean=sum/(double)(9);
+					sum=0.0;
+					for(s=-a;s<=a;s++)
+					{
+						xpt=i+s;
+						if(xpt<0)
+							xpt=0;
+						if(xpt>=m)
+							xpt=m-1;
+					for(t=-b;t<=b;t++)
+					{
+						ypt=j+t;
+						if(ypt<0)
+							ypt=0;
+						if(ypt>=n)
+							ypt=n-1;
+							sum=sum+((fxy[xpt][ypt]-mean)*(fxy[xpt][ypt]-mean));
+							sum=sum/(double)(8);
+							sum=sqrt(sum);
+					}
+					}
+					//printf("%lf",gm);
+					//getch();
+					if(fxy[i][j]>(30*sum) && fxy[i][j]>(1.5*gm) )
+						fxyout[i][j]=255;
+					else fxyout[i][j]=0;
+				}
+
+
+				
+				
+}
+void linewith45(unsigned long ImageLength, unsigned long ImageWidthByte,unsigned char fxyout[MAXSIZE][3*MAXSIZE],unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+		int val,m=ImageLength,n=ImageWidth,a,b,i,j,s,t,xpt,ypt;
+		double sum=0.0,mean=0.0,gm=0.0,w[3][3]={2,-1,-1,-1,2,-1,-1,-1,2};
+			a=1,b=1;
+			
+			
+			for(i=0;i<m;i++)
+				for(j=0;j<n;j++)
+				{
+					
+					sum=0.0;
+					for(s=-a;s<=a;s++)
+					{
+						xpt=i+s;
+						if(xpt<0)
+							xpt=0;
+						if(xpt>=m)
+							xpt=m-1;
+					for(t=-b;t<=b;t++)
+					{
+						ypt=j+t;
+						if(ypt<0)
+							ypt=0;
+						if(ypt>=n)
+							ypt=n-1;
+							sum=sum+(w[s+a][t+b]*(int)fxy[xpt][ypt]);
+
+					}
+					}
+					
+					
+						fxyout[i][j]=sum;
+					
+				}
+
+
+				
+				
+}
+void moving(unsigned long ImageLength, unsigned long ImageWidthByte,unsigned char fxyout[MAXSIZE][3*MAXSIZE],unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+		int q=20,val,m=ImageLength,n=ImageWidth,a,b,i,j,s,t,xpt,ypt;
+		double sum=0.0,mean=0.0,gm=0.0,w[3][3]={2,-1,-1,-1,2,-1,-1,-1,2};
+			a=1,b=1;
+			
+			mean=fxy[0][0]/q;
+			for(i=0;i<m;i++)
+				for(j=0;j<n;j++)
+				{
+					if(fxy[i][j]>(1.5*mean))
+						fxyout[i][j]=255;
+					else
+						fxyout[i][j]=0;
+					t=j-q;
+					if(t<0) t=0; else t=fxy[i][j-q]; 
+					mean=mean+1/q*(fxy[i][j]-t);
+
+					
+					
+				
+					
+					
+						
+					
+				}
+
+
+				
+				
+}

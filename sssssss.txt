@@ -1,0 +1,40 @@
+void linewith45(unsigned long ImageLength, unsigned long ImageWidthByte,unsigned char fxyout[MAXSIZE][3*MAXSIZE],unsigned char fxy[MAXSIZE][3*MAXSIZE])
+{
+		int val,m=ImageLength,n=ImageWidth,a,b,i,j,s,t,xpt,ypt;
+		double sum=0.0,mean=0.0,gm=0.0,w[3][3]={2,-1,-1,-1,2,-1,-1,-1,2};
+			a=1,b=1;
+			
+			
+			for(i=0;i<m;i++)
+				for(j=0;j<n;j++)
+				{
+					
+					sum=0.0;
+					for(s=-a;s<=a;s++)
+					{
+						xpt=i+s;
+						if(xpt<0)
+							xpt=0;
+						if(xpt>=m)
+							xpt=m-1;
+					for(t=-b;t<=b;t++)
+					{
+						ypt=j+t;
+						if(ypt<0)
+							ypt=0;
+						if(ypt>=n)
+							ypt=n-1;
+							sum=sum+(w[s+a][t+b]*(int)fxy[xpt][ypt]);
+
+					}
+					}
+					
+					
+						fxyout[i][j]=sum;
+					
+				}
+
+
+				
+				
+}
